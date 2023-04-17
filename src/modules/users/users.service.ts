@@ -21,10 +21,15 @@ export class UsersService {
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.UsersRepository.update(id, UpdateUserDto)
+    return this.UsersRepository.update(id, updateUserDto)
   }
 
   remove(id: string) {
     return this.UsersRepository.delete(id)
+  }
+
+  findByEmail(email: string) {
+    const findUser = this.UsersRepository.findByEmail(email);
+    return findUser;
   }
 }
