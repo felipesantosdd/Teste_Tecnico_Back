@@ -3,12 +3,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersRepository } from './repositories/users.repository';
 import { randomUUID } from 'crypto';
-import { emailService } from 'src/utils/sendEmail.utils';
+import { EmailService } from 'src/utils/sendEmail.utils';
 import AppError from 'src/errors/appError';
 import { hashSync } from 'bcryptjs';
 
 @Injectable()
-export class UsersService {
+class UsersService {
   constructor(private UsersRepository: UsersRepository) {
   }
 
@@ -54,9 +54,9 @@ export class UsersService {
     await this.UsersRepository.update(user.id, { reset_token } as UpdateUserDto);
 
 
-    const resetPasswordTemplate = emailService.resetPasswordTemplate(email, user.name, protocol, host, reset_token)
+    const resetPasswordTemplate = EmailService.resetPasswordTemplate(email, user.name, protocol, host, reset_token)
 
-    await emailService.sendEmail(resetPasswordTemplate)
+    await EmailService.sendEmail(resetPasswordTemplate)
 
   }
 
@@ -72,3 +72,6 @@ export class UsersService {
 
 
 }
+
+
+export { UsersService }

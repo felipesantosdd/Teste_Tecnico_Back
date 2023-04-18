@@ -19,6 +19,5 @@ export class CreateUserDto {
     })
     password: string;
 
-    @IsString()
-    reset_token: string;
+    reset_token?: string;
 }

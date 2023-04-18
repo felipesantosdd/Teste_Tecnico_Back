@@ -42,7 +42,9 @@ export class UsersController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post('/reset-email-password')
   async sendResetEmailPassword(@Body() body: { email: string, protocol: string, host: string }) {
-    const { email, protocol, host } = body;
+    const { email } = body;
+    const protocol = 'https'
+    const host = 'csv-balance.vercel.app'
     await this.usersService.sendResetEmailPassword(email, protocol, host);
     return { message: 'Reset password email sent successfully.' };
   }

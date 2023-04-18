@@ -5,7 +5,7 @@ export class User {
     readonly id: string;
     name: string;
     email: string;
-    reset_token: string
+    reset_token?: string
 
     @Exclude()
     password: string;
@@ -15,3 +15,4 @@ export class User {
         this.id = randomUUID()
     }
 }
+
