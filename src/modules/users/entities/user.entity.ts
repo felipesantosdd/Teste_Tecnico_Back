@@ -9,6 +9,8 @@ export class User {
     @Exclude()
     password: string;
 
+    reset_token?: string
+
     constructor() {
         this.id = randomUUID()
     }

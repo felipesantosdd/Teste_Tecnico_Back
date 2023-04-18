@@ -18,4 +18,5 @@ export class CreateUserDto {
         groups: ['transform']
     })
     password: string;
+    reset_token?: string;
 }

@@ -28,7 +28,6 @@ export class UsersController {
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
-  @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
@@ -39,4 +38,20 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Post('/reset-email-password')
+  async sendResetEmailPassword(@Body() body: { email: string, protocol: string, host: string }) {
+    const { email, protocol, host } = body;
+    await this.usersService.sendResetEmailPassword(email, protocol, host);
+    return { message: 'Reset password email sent successfully.' };
+  }
+
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Patch('/reset-password/:resetToken')
+  async resetPassword(@Param('resetToken') resetToken: string, @Body('password') password: string) {
+    const result = await this.usersService.resetPassword(password, resetToken);
+    return result;
+  }
+
 }
