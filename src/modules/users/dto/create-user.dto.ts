@@ -18,5 +18,7 @@ export class CreateUserDto {
         groups: ['transform']
     })
     password: string;
-    reset_token?: string;
+
+    @IsString()
+    reset_token: string;
 }
