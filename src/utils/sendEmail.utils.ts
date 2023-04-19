@@ -53,7 +53,7 @@ export class EmailService {
                     button: {
                         color: '#DC4D2F',
                         text: 'Redefina sua senha',
-                        link: `${protocol}://${host}/login/resetPassword/${resetToken}`
+                        link: `${protocol}://${host}/reset/${resetToken}`
                     }
                 },
                 outro: 'Se você não solicitou uma redefinição de senha, nenhuma outra ação será necessária de sua parte..'

@@ -56,9 +56,7 @@ export class BalancesController {
         const decodedToken = jwt.decode(token);
         const userId = String(decodedToken.sub)
 
-        await this.balancesService.loadCSV(userId, file);
-        return
-
+        return this.balancesService.loadCSV(userId, file);
     }
 
 

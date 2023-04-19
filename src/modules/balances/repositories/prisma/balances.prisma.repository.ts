@@ -7,7 +7,7 @@ import { IBalance, IBalanceCreateRequest } from "../../interfaces";
 import AppError from "src/errors/appError";
 import fs, { createReadStream } from 'node:fs';
 import { parse as csvParse } from "csv-parse"
-import { parse } from "date-fns";
+import { endOfDay, parse, startOfDay } from "date-fns";
 import { promises } from 'fs';
 
 
@@ -17,9 +17,19 @@ export class BalancesPrismaRepository implements BalancesRepository {
 
     async create(data: any): Promise<any> {
 
-        console.log(data)
-
         const createds = []
+        const todayStart = startOfDay(new Date());
+        const todayEnd = endOfDay(new Date());
+
+        const balancesOnSameDay = await this.prisma.balance.findMany({
+            where: {
+                AND: [
+                    { uploadAt: { gte: todayStart } },
+                    { uploadAt: { lte: todayEnd } },
+                ],
+            },
+        });
+
 
         data.map(async (ele) => {
             if (!isNaN(ele.value)) {
@@ -38,10 +48,13 @@ export class BalancesPrismaRepository implements BalancesRepository {
                 });
 
                 plainToInstance(Balance, newBalance);
-                console.log(newBalance);
                 createds.push(newBalance)
 
             }
+        })
+
+        balancesOnSameDay.map((ele) => {
+            this.delete(ele.id)
         })
 
 
