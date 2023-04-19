@@ -6,6 +6,9 @@ rm -rf dist
 # Instala as dependências do projeto
 npm install
 
+npm install -g @nestjs/cli
+
+npm add -D prisma
 # Compila o código TypeScript
 npm run build
 
