@@ -16,7 +16,20 @@ model User {
   email       String @unique
   password    String
   reset_token String?
+  balasnces   Balance[]
 
   @@map("users")
+}
+
+model Balance {
+  id              String @id
+  document        String 
+  value           Int
+  date            DateTime
+  uploadAt        DateTime @default(now())
+  user            User? @relation(fields:[userId], references: [id])
+  userId          String?
+
+  @@map("balances")
 }
 

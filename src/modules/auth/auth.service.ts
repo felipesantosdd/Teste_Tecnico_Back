@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -15,18 +16,18 @@ export class AuthService {
         if (user) {
             const passwordMatch = await compare(userPassword, user.password);
             if (passwordMatch) {
-                return { email: user.email };
+                return { email: user.email, userId: user.id };
             }
         }
 
         return null;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async login({ email, password }) {
         const user = await this.userService.findByEmail(email);
         return {
-            token: this.jwtService.sign({ email }, { subject: user.id }),
+            token: this.jwtService.sign({ userId: user.id, email }, { subject: user.id }),
         };
     }
 }
+

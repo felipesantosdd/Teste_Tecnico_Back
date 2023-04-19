@@ -7,6 +7,7 @@ import { PrismaService } from 'src/database/prisma.service';
 import { EmailService } from 'src/utils/sendEmail.utils';
 
 
+
 @Module({
   controllers: [UsersController],
   providers: [

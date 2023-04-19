@@ -14,8 +14,6 @@ export class UserPrismaRepository implements UsersRepository {
     async create(data: CreateUserDto): Promise<User> {
         const user = new User();
 
-        console.log(user)
-
         Object.assign(user, {
             ...data
         })
