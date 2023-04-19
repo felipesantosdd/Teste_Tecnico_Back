@@ -4,7 +4,7 @@ export class Balance {
     readonly id?: string;
     document?: string;
     value?: number;
-    date?: Date;
+    date?: string;
     uploadAt?: Date;
     userId?: string;
 

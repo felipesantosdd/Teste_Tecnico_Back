@@ -5,32 +5,51 @@ import { Balance } from "../../entities/balance.entity";
 import { plainToInstance } from "class-transformer";
 import { IBalance, IBalanceCreateRequest } from "../../interfaces";
 import AppError from "src/errors/appError";
+import fs, { createReadStream } from 'node:fs';
+import { parse as csvParse } from "csv-parse"
+import { parse } from "date-fns";
+import { promises } from 'fs';
+
 
 @Injectable()
 export class BalancesPrismaRepository implements BalancesRepository {
-    constructor(private prisma: PrismaService) { }
 
-    async create(userId: string, data: IBalanceCreateRequest): Promise<Balance> {
-        const balance = new Balance();
-        Object.assign(balance, { ...data, id: balance.id });
 
-        const newBalance = await this.prisma.balance.create({
-            data: {
-                id: balance.id,
-                document: data.document,
-                value: data.value,
-                date: new Date(data.date),
-                userId: userId,
-            },
-        });
+    async create(data: any): Promise<any> {
 
-        plainToInstance(Balance, newBalance);
+        console.log(data)
 
-        return newBalance;
+        const createds = []
+
+        data.map(async (ele) => {
+            if (!isNaN(ele.value)) {
+                const balance = new Balance();
+
+                Object.assign(balance, { ...data, id: balance.id });
+
+                const newBalance = await this.prisma.balance.create({
+                    data: {
+                        id: balance.id,
+                        document: ele.document,
+                        value: Number(ele.value),
+                        date: ele.date,
+                        userId: ele.userId,
+                    },
+                });
+
+                plainToInstance(Balance, newBalance);
+                console.log(newBalance);
+                createds.push(newBalance)
+
+            }
+        })
+
+
+        return createds;
     }
 
     async findAll(userId: string): Promise<IBalance[] | []> {
-        const balances: IBalance[] = await this.prisma.balance.findMany({
+        const balances: any[] = await this.prisma.balance.findMany({
             where: { userId }
         })
         plainToInstance(Balance, balances)
@@ -39,7 +58,7 @@ export class BalancesPrismaRepository implements BalancesRepository {
     }
 
     async findOneById(userId: string, id: string): Promise<IBalance> {
-        const balance: IBalance = await this.prisma.balance.findFirst({
+        const balance: any = await this.prisma.balance.findFirst({
             where: { id }
         })
 
@@ -64,6 +83,66 @@ export class BalancesPrismaRepository implements BalancesRepository {
         return
     }
 
+    async loadCSV(userId: string, file: Express.Multer.File): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const stream = createReadStream(file.path)
+            const balances = []
 
+            const parsefile = csvParse()
+            stream.pipe(parsefile)
+
+            parsefile
+                .on('data', async (line) => {
+                    const [date, document, value] = line.toString().split(';')
+
+                    balances.push({
+                        userId: userId,
+                        document: document,
+                        date: date,
+                        value: value,
+                    });
+                })
+                .on('end', () => {
+                    promises.unlink(file.path);
+                    this.create(balances)
+                    resolve(balances);
+                })
+                .on('error', (error) => {
+                    reject(error);
+                });
+        });
+    }
+
+    constructor(private prisma: PrismaService) { }
+    import(userId: string, file: Express.Multer.File): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    // async import(userId: string, file: Express.Multer.File): Promise<void> {
+    //     const balances = await this.loadCSV(userId, file);
+    //     const balancesFormated = [];
+
+    //     balances.forEach((ele) => {
+    //         try {
+    //             const parsedDate = parse(
+    //                 ele.data_do_lancamento_financeiro,
+    //                 'dd/MM/yyyy',
+    //                 new Date()
+    //             );
+
+    //             if (isNaN(parsedDate.getTime())) {
+    //                 throw new Error('Invalid date format');
+    //             }
+
+    //             balancesFormated.push({
+    //                 document: ele.documento_recebedor,
+    //                 value: ele.valor,
+    //                 date: parsedDate.toISOString(),
+    //             });
+    //         } catch (err) {
+    //             console.error(`Error parsing date "${ele.data_do_lancamento_financeiro}": ${err}`);
+    //         }
+    //     });
+    // }
 
 }

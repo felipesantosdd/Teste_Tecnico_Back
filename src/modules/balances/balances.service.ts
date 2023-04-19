@@ -7,7 +7,15 @@ export class BalancesService {
     constructor(private BalancesRepository: BalancesRepository) { }
 
     create(userId: string, data: IBalanceCreateRequest) {
-        return this.BalancesRepository.create(userId, data)
+        return this.BalancesRepository.create(data)
+    }
+
+    loadCSV(userId: string, file: Express.Multer.File) {
+        return this.BalancesRepository.loadCSV(userId, file)
+    }
+
+    import(userId: string, file: Express.Multer.File) {
+        return this.BalancesRepository.import(userId, file)
     }
 
     findAll(userId: string) {
@@ -22,3 +30,27 @@ export class BalancesService {
         return this.BalancesRepository.delete(id)
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

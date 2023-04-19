@@ -9,7 +9,7 @@ export interface IBalance {
     id: string;
     document: string;
     value: number;
-    date: Date;
+    date: string;
     uploadAt: Date;
     userId: string;
 }

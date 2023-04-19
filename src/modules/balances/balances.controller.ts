@@ -1,10 +1,13 @@
 import { AuthGuard } from '@nestjs/passport';
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, Request, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { BalancesService } from "./balances.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { IBalanceCreateRequest } from "./interfaces";
 import * as jwt from 'jsonwebtoken';
 import AppError from 'src/errors/appError';
+import { diskStorage } from 'multer';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 
 @Controller('balances')
 export class BalancesController {
@@ -24,6 +27,43 @@ export class BalancesController {
             throw new AppError(error.message, 500)
         }
     }
+
+    @UseInterceptors(ClassSerializerInterceptor)
+    @UseGuards(JwtAuthGuard)
+    @Post('/import')
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+                destination: './tmp',
+                filename: (request, file, callback) => {
+                    const filename = `${file.originalname}.csv`
+                    return callback(null, filename)
+                }
+            }),
+        }),
+    )
+    async import(
+        @Request() request,
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [new FileTypeValidator({ fileType: 'csv' })]
+            })
+        )
+        file: Express.Multer.File
+    ) {
+
+        const token = request.headers.authorization.split(' ')[1];
+        const decodedToken = jwt.decode(token);
+        const userId = String(decodedToken.sub)
+
+        await this.balancesService.loadCSV(userId, file);
+        return
+
+    }
+
+
+
+
 
     @UseInterceptors(ClassSerializerInterceptor)
     @Get()
