@@ -1,7 +1,7 @@
-#!/bin/bash
-
-# Remove a pasta de construção se ela já existir
-sudo rm -rf dist
+#!/usr/bin/env bash
+# exit on error
+set -o errexit
+rm -rf dist
 
 # Instala as dependências do projeto
 sudo npm install
