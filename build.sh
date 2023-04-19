@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Remove a pasta de construção se ela já existir
-rm -rf dist
+sudo rm -rf dist
 
 # Instala as dependências do projeto
-npm install
+sudo npm install
 
 npm install -g @nestjs/cli
 
