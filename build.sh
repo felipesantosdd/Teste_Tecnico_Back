@@ -4,7 +4,7 @@ set -o errexit
 rm -rf dist
 
 # Instala as dependências do projeto
-sudo npm install
+npm
 
 npm install -g @nestjs/cli
 
