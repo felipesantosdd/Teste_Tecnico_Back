@@ -18,6 +18,3 @@ npx prisma generate
 # Copia os arquivos necessários para a pasta de construção
 cp -R src/public dist/
 cp src/config.json dist/
-
-# Inicia o servidor com o PM2
-pm2 start dist/main.js --name teste_tecnico_back
