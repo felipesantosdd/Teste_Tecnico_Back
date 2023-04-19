@@ -11,5 +11,6 @@ export interface IBalance {
     value: number;
     date: string;
     uploadAt: Date;
+    deletedAt?: Date;
     userId: string;
 }

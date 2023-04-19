@@ -27,6 +27,7 @@ model Balance {
   value           Int
   date            String
   uploadAt        DateTime @default(now())
+  deletedAt       DateTime?
   user            User? @relation(fields:[userId], references: [id])
   userId          String?
 

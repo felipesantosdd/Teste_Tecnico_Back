@@ -30,13 +30,11 @@ export class BalancesPrismaRepository implements BalancesRepository {
             },
         });
 
-
-        data.map(async (ele) => {
-            if (!isNaN(ele.value)) {
+        data.slice(1)
+        data.map(async (ele, index) => {
+            if (ele.document !== "" && !isNaN(ele.value) && ele.date !== "") {
                 const balance = new Balance();
-
-                Object.assign(balance, { ...data, id: balance.id });
-
+                Object.assign(balance, { ...ele, id: balance.id });
                 const newBalance = await this.prisma.balance.create({
                     data: {
                         id: balance.id,
@@ -46,12 +44,10 @@ export class BalancesPrismaRepository implements BalancesRepository {
                         userId: ele.userId,
                     },
                 });
-
                 plainToInstance(Balance, newBalance);
                 createds.push(newBalance)
-
             }
-        })
+        });
 
         balancesOnSameDay.map((ele) => {
             this.delete(ele.id)
@@ -63,7 +59,10 @@ export class BalancesPrismaRepository implements BalancesRepository {
 
     async findAll(userId: string): Promise<IBalance[] | []> {
         const balances: any[] = await this.prisma.balance.findMany({
-            where: { userId }
+            where: {
+                userId,
+                deletedAt: null
+            }
         })
         plainToInstance(Balance, balances)
 
@@ -90,11 +89,15 @@ export class BalancesPrismaRepository implements BalancesRepository {
     }
 
     async delete(id: string): Promise<void> {
-        await this.prisma.balance.delete({
-            where: { id }
+        await this.prisma.balance.update({
+            where: { id },
+            data: {
+                deletedAt: new Date()
+            }
         })
         return
     }
+
 
     async loadCSV(userId: string, file: Express.Multer.File): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -131,31 +134,5 @@ export class BalancesPrismaRepository implements BalancesRepository {
         throw new Error("Method not implemented.");
     }
 
-    // async import(userId: string, file: Express.Multer.File): Promise<void> {
-    //     const balances = await this.loadCSV(userId, file);
-    //     const balancesFormated = [];
-
-    //     balances.forEach((ele) => {
-    //         try {
-    //             const parsedDate = parse(
-    //                 ele.data_do_lancamento_financeiro,
-    //                 'dd/MM/yyyy',
-    //                 new Date()
-    //             );
-
-    //             if (isNaN(parsedDate.getTime())) {
-    //                 throw new Error('Invalid date format');
-    //             }
-
-    //             balancesFormated.push({
-    //                 document: ele.documento_recebedor,
-    //                 value: ele.valor,
-    //                 date: parsedDate.toISOString(),
-    //             });
-    //         } catch (err) {
-    //             console.error(`Error parsing date "${ele.data_do_lancamento_financeiro}": ${err}`);
-    //         }
-    //     });
-    // }
 
 }
