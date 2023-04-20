@@ -41,7 +41,7 @@
 <br/>
 <h1>Executando o servidor</h1>
 <p>Depois de tudo configurado, hora da parte boa, use o comando:<p>
-<h3>npm run start:prod</h3>
+<h3>npm run start:dev</h3>
 
 <h1>End Points<h1>
 <p>A Aplicação conta com os seguintes end points<p>
@@ -62,4 +62,4 @@
 <H2>POST/balances/import</h2>
 <H2>GET/balances</h2>
 <H2>GET/balances/:id</h2>
-<H2>DELETE/balances/:id</h2>
+<H2>PATCH/balances/:id(usado para realizar o soft delete)</h2>

@@ -1,5 +1,5 @@
 import { AuthGuard } from '@nestjs/passport';
-import { Body, ClassSerializerInterceptor, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Patch, Post, Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { BalancesService } from "./balances.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { IBalanceCreateRequest } from "./interfaces";
@@ -94,7 +94,7 @@ export class BalancesController {
 
     @UseInterceptors(ClassSerializerInterceptor)
     @UseGuards(JwtAuthGuard)
-    @Delete(':id')
+    @Patch(':id')
     delete(@Param('id') id: string) {
         try {
             return this.balancesService.delete(id)
